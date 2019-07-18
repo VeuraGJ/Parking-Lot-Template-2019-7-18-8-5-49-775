@@ -15,6 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.awt.print.Pageable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -54,5 +57,34 @@ public class ParkingLotControllerTest {
         mvc.perform(delete("/parking-lots/{parkingLotId}",parkingLotId))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+    @Test
+    public void should_get_parkingLots_when_call_get_parkingLot_api() throws Exception {
+        List<ParkingLot> parkingLots = new ArrayList<>();
+        parkingLots.add(new ParkingLot("Lala", 10, "where"));
+        parkingLots.add(new ParkingLot("Laa", 10, "where"));
+        given(parkingLotRepository.findAll()).willReturn(parkingLots);
+        mvc.perform(get("/parking-lots"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Lala"));
+    }
+    @Test
+    public void should_get_parkingLots_by_page_when_call_get_parkingLot_api() throws Exception {
+        mvc.perform(get("/parking-lots?page=1&pageSize=15"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void should_get_parkingLots_by_id_when_call_get_parkingLot_api() throws Exception {
+        ParkingLot parkingLot = new ParkingLot("Lala", 10, "where");
+        parkingLot.setId(1);
+        given(parkingLotRepository.findById(any(Long.class))).willReturn(java.util.Optional.of(parkingLot));
+        mvc.perform(get("/parking-lots/1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Lala"))
+                .andExpect(jsonPath("$.capacity").value("10"))
+                .andExpect(jsonPath("$.location").value("where"));
     }
 }
