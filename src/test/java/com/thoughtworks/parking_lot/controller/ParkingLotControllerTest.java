@@ -43,5 +43,16 @@ public class ParkingLotControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(name));
     }
-
+    @Test
+    public void should_delete_parkingLot_when_call_delete_parkingLot_api() throws Exception {
+        Gson gson = new Gson();
+        String name = UUID.randomUUID().toString();
+        ParkingLot parkingLot = new ParkingLot(name, 10, "where");
+        given(parkingLotRepository.save(any(ParkingLot.class))).willReturn(parkingLot);
+        ParkingLot saveParkingLot = parkingLotRepository.save(parkingLot);
+        long parkingLotId = saveParkingLot.getId();
+        mvc.perform(delete("/parking-lots/{parkingLotId}",parkingLotId))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }

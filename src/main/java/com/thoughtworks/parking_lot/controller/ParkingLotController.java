@@ -14,9 +14,10 @@ public class ParkingLotController {
     public ResponseEntity<ParkingLot> addParkingLot(@RequestBody ParkingLot parkingLot){
         return ResponseEntity.ok(parkingLotRepository.save(parkingLot));
     }
-//    @DeleteMapping("/parking-lots/{parkingLotId}")
-//    public ResponseEntity<ParkingLot> deleteParkingLot(@PathVariable long parkingLotId){
-//        ParkingLot parkingLot = parkingLotRepository.findById(parkingLotId).orElse(null);
-//        return ResponseEntity.ok(parkingLotRepository.save(parkingLot));
-//    }
+    @DeleteMapping("/parking-lots/{parkingLotId}")
+    public ResponseEntity<ParkingLot> deleteParkingLot(@PathVariable long parkingLotId){
+        ParkingLot parkingLot = parkingLotRepository.findById(parkingLotId).orElse(null);
+        parkingLotRepository.deleteById(parkingLotId);
+        return ResponseEntity.ok(parkingLot);
+    }
 }
