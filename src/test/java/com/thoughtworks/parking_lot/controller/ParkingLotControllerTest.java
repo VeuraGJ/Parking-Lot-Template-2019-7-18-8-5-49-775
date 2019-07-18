@@ -11,14 +11,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebM
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -71,6 +73,13 @@ public class ParkingLotControllerTest {
     }
     @Test
     public void should_get_parkingLots_by_page_when_call_get_parkingLot_api() throws Exception {
+        //todo
+//        List<ParkingLot> parkingLotList = new ArrayList<>();
+//        parkingLotList.add(new ParkingLot("Lala", 10, "where"));
+//        parkingLotList.add(new ParkingLot("Laa", 10, "where"));
+//        Page<ParkingLot> parkingLots = (Page<ParkingLot>) parkingLotList;
+//        given(parkingLotRepository.findAll(any(Pageable.class))).willReturn(parkingLots);
+//        System.out.println(parkingLots.get().collect(Collectors.toList()));
         mvc.perform(get("/parking-lots?page=1&pageSize=15"))
                 .andDo(print())
                 .andExpect(status().isOk());
