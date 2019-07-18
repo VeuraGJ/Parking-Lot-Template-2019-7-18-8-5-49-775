@@ -87,4 +87,18 @@ public class ParkingLotControllerTest {
                 .andExpect(jsonPath("$.capacity").value("10"))
                 .andExpect(jsonPath("$.location").value("where"));
     }
+    @Test
+    public void should_update_parkingLot_when_call_put_parkingLot_api() throws Exception {
+        Gson gson = new Gson();
+        ParkingLot parkingLot = new ParkingLot("lala", 10, "where");
+        parkingLot.setId(1);
+        given(parkingLotRepository.save(any(ParkingLot.class))).willReturn(parkingLot);
+        mvc.perform(put("/parking-lots/1").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(parkingLot)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.name").value("lala"))
+                .andExpect(jsonPath("$.capacity").value("10"))
+                .andExpect(jsonPath("$.location").value("where"));
+    }
 }

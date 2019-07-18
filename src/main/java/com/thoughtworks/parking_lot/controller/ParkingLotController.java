@@ -41,5 +41,11 @@ public class ParkingLotController {
         return ResponseEntity.ok(parkingLot);
 
     }
+    @PutMapping("/parking-lots/{parkingLotId}")
+    public ResponseEntity<ParkingLot> updateParkingLot(@PathVariable long parkingLotId,@RequestBody ParkingLot parkingLot) {
+        parkingLot.setId(parkingLotId);
+        return ResponseEntity.ok(parkingLotRepository.save(parkingLot));
+
+    }
 
 }
