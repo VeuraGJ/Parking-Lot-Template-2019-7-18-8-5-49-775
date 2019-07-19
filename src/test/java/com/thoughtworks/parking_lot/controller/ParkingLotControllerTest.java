@@ -50,13 +50,7 @@ public class ParkingLotControllerTest {
     }
     @Test
     public void should_delete_parkingLot_when_call_delete_parkingLot_api() throws Exception {
-        Gson gson = new Gson();
-        String name = UUID.randomUUID().toString();
-        ParkingLot parkingLot = new ParkingLot(name, 10, "where");
-        given(parkingLotRepository.save(any(ParkingLot.class))).willReturn(parkingLot);
-        ParkingLot saveParkingLot = parkingLotRepository.save(parkingLot);
-        long parkingLotId = saveParkingLot.getId();
-        mvc.perform(delete("/parking-lots/{parkingLotId}",parkingLotId))
+        mvc.perform(delete("/parking-lots/{parkingLotId}",1))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -73,16 +67,15 @@ public class ParkingLotControllerTest {
     }
     @Test
     public void should_get_parkingLots_by_page_when_call_get_parkingLot_api() throws Exception {
-        //todo
-//        List<ParkingLot> parkingLotList = new ArrayList<>();
-//        parkingLotList.add(new ParkingLot("Lala", 10, "where"));
-//        parkingLotList.add(new ParkingLot("Laa", 10, "where"));
-//        Page<ParkingLot> parkingLots = (Page<ParkingLot>) parkingLotList;
-//        given(parkingLotRepository.findAll(any(Pageable.class))).willReturn(parkingLots);
-//        System.out.println(parkingLots.get().collect(Collectors.toList()));
+        List<ParkingLot> parkingLotList = new ArrayList<>();
+        parkingLotList.add(new ParkingLot("Lala", 10, "where"));
+        parkingLotList.add(new ParkingLot("Laa", 10, "where"));
+        parkingLotRepository.saveAll(parkingLotList);
+        given(parkingLotRepository.findAll(any(Pageable.class))).willReturn(parkingLotList);
         mvc.perform(get("/parking-lots?page=1&pageSize=15"))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(parkingLotList.size()));
     }
     @Test
     public void should_get_parkingLots_by_id_when_call_get_parkingLot_api() throws Exception {

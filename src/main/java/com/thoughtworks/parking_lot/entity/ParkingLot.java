@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.Min;
 
 @Entity
 public class ParkingLot {
@@ -12,6 +13,7 @@ public class ParkingLot {
     private long id;
     @Column(unique = true)
     private String name;
+    @Min(0)
     private int capacity;
     private String location;
 

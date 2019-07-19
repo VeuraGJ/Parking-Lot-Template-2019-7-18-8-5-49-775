@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,10 +30,11 @@ public class ParkingLotController {
     public ResponseEntity<List<ParkingLot>>getParkingLots(@RequestParam(defaultValue = "0") int page,
                                                           @RequestParam(defaultValue = "0") int pageSize) {
         if (page == 0 || pageSize == 0) {
-            return ResponseEntity.ok(parkingLotRepository.findAll());
+            List<ParkingLot> parkingLots = new ArrayList<>();
+            parkingLotRepository.findAll().iterator().forEachRemaining(parkingLots::add);
+            return ResponseEntity.ok(parkingLots);
         } else {
-            Page<ParkingLot> parkingLotPage = parkingLotRepository.findAll(PageRequest.of(page, pageSize));
-            return ResponseEntity.ok(parkingLotPage.get().collect(Collectors.toList()));
+            return ResponseEntity.ok(parkingLotRepository.findAll(PageRequest.of(page, pageSize)));
         }
     }
     @GetMapping("/parking-lots/{parkingLotId}")
