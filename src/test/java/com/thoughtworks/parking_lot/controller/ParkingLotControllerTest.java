@@ -1,6 +1,8 @@
 package com.thoughtworks.parking_lot.controller;
 
 import com.google.gson.Gson;
+import com.thoughtworks.parking_lot.entity.Car;
+import com.thoughtworks.parking_lot.entity.OrderForm;
 import com.thoughtworks.parking_lot.entity.ParkingLot;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import org.junit.Test;
@@ -18,6 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -102,5 +105,17 @@ public class ParkingLotControllerTest {
                 .andExpect(jsonPath("$.name").value("lala"))
                 .andExpect(jsonPath("$.capacity").value("10"))
                 .andExpect(jsonPath("$.location").value("where"));
+    }
+    @Test
+    public void should_get_parkingLot_empty_position_when_call_get_parkingLot_empty_position_api() throws Exception {
+        List<OrderForm> orderForms = new ArrayList<>();
+        orderForms.add(new OrderForm(new Date(),new Car("1U3456")));
+        ParkingLot parkingLot = new ParkingLot("Lala", 10, "where",orderForms);
+        parkingLot.setId(1);
+        given(parkingLotRepository.findById(any(Long.class))).willReturn(java.util.Optional.of(parkingLot));
+        mvc.perform(get("/parking-lots/1/empty-position"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().json("9"));
     }
 }

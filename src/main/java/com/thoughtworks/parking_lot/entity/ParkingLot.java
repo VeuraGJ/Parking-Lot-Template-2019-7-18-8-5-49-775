@@ -1,10 +1,8 @@
 package com.thoughtworks.parking_lot.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Min;
+import java.util.List;
 
 @Entity
 public class ParkingLot {
@@ -16,6 +14,8 @@ public class ParkingLot {
     @Min(0)
     private int capacity;
     private String location;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<OrderForm> orderForms;
 
     public ParkingLot() {
     }
@@ -24,6 +24,13 @@ public class ParkingLot {
         this.name = name;
         this.capacity = capacity;
         this.location = location;
+    }
+
+    public ParkingLot(String name, @Min(0) int capacity, String location, List<OrderForm> orderForms) {
+        this.name = name;
+        this.capacity = capacity;
+        this.location = location;
+        this.orderForms = orderForms;
     }
 
     public long getId() {
@@ -56,5 +63,14 @@ public class ParkingLot {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+
+    public List<OrderForm> getOrderForms() {
+        return orderForms;
+    }
+
+    public void setOrderForms(List<OrderForm> orderForms) {
+        this.orderForms = orderForms;
     }
 }

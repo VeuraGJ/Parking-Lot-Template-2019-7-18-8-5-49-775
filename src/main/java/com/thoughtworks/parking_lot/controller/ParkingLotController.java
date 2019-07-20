@@ -1,5 +1,6 @@
 package com.thoughtworks.parking_lot.controller;
 
+import com.thoughtworks.parking_lot.entity.OrderForm;
 import com.thoughtworks.parking_lot.entity.ParkingLot;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,16 @@ public class ParkingLotController {
     public ResponseEntity<ParkingLot> updateParkingLot(@PathVariable long parkingLotId,@RequestBody ParkingLot parkingLot) {
         parkingLot.setId(parkingLotId);
         return ResponseEntity.ok(parkingLotRepository.save(parkingLot));
+
+    }
+    @GetMapping("/parking-lots/{parkingLotId}/empty-position")
+    @ResponseBody
+    public Integer getParkingLotEmptyPositionNum(@PathVariable long parkingLotId) {
+        ParkingLot parkingLot=parkingLotRepository.findById(parkingLotId).orElse(null);
+        List<OrderForm> orderForms=parkingLot.getOrderForms().stream()
+                .filter(orderForm -> orderForm.getStatus().equals("on"))
+                .collect(Collectors.toList());
+        return parkingLot.getCapacity()-orderForms.size();
 
     }
 
