@@ -118,4 +118,19 @@ public class ParkingLotControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("9"));
     }
+    @Test
+    public void should_add_orderform_when_call_add_parkingLot_order_form_api() throws Exception {
+        Gson gson = new Gson();
+        List<OrderForm> orderForms = new ArrayList<>();
+        orderForms.add(new OrderForm(new Car("1U3456")));
+        ParkingLot parkingLot = new ParkingLot("Lala", 10, "where",orderForms);
+        parkingLot.setId(1);
+        given(parkingLotRepository.findById(any(Long.class))).willReturn(java.util.Optional.of(parkingLot));
+        parkingLot.getOrderForms().add(new OrderForm(new Car("1O456")));
+        given(parkingLotRepository.save(any(ParkingLot.class))).willReturn(parkingLot);
+        mvc.perform(post("/parking-lots/1/order-forms").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(parkingLot)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orderForms.length()").value(orderForms.size()));
+    }
 }

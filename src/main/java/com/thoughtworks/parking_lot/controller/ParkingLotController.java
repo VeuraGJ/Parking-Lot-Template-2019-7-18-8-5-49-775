@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,5 +61,11 @@ public class ParkingLotController {
         return parkingLot.getCapacity()-orderForms.size();
 
     }
-
+    @PostMapping("/parking-lots/{parkingLotId}/order-forms")
+    public ResponseEntity<ParkingLot> addOrderForm(@PathVariable long parkingLotId,@RequestBody OrderForm orderForm){
+        ParkingLot parkingLot =parkingLotRepository.findById(parkingLotId).orElse(null);
+        orderForm.setCreateTime(new Date());
+        parkingLot.getOrderForms().add(orderForm);
+        return ResponseEntity.ok(parkingLotRepository.save(parkingLot));
+    }
 }

@@ -24,6 +24,10 @@ public class OrderForm {
         this.car = car;
     }
 
+    public OrderForm(Car car) {
+        this.car = car;
+    }
+
     public long getId() {
         return id;
     }
