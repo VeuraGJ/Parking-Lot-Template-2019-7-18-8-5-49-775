@@ -56,14 +56,15 @@ public class ParkingLotController {
 
     }
     @GetMapping("/parking-lots/{parkingLotId}/empty-position")
-    @ResponseBody
-    public Integer getParkingLotEmptyPositionNum(@PathVariable long parkingLotId) {
+    public String getParkingLotEmptyPositionNum(@PathVariable long parkingLotId) {
         ParkingLot parkingLot=parkingLotRepository.findById(parkingLotId).orElse(null);
         List<OrderForm> orderForms=parkingLot.getOrderForms().stream()
                 .filter(orderForm -> orderForm.getStatus().equals("on"))
                 .collect(Collectors.toList());
-        return parkingLot.getCapacity()-orderForms.size();
-
+        if(parkingLot.getCapacity()-orderForms.size()==0){
+            return "停车场已经满";
+        }
+        return String.valueOf(parkingLot.getCapacity()-orderForms.size());
     }
     @PostMapping("/parking-lots/{parkingLotId}/order-forms")
     public ResponseEntity<ParkingLot> addOrderForm(@PathVariable long parkingLotId,@RequestBody OrderForm orderForm){

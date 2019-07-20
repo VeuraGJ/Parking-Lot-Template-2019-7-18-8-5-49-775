@@ -122,6 +122,20 @@ public class ParkingLotControllerTest {
                 .andExpect(content().json("9"));
     }
     @Test
+    public void should_no_empty_position_when_call_get_parkingLot_empty_position_api() throws Exception {
+        List<OrderForm> orderForms = new ArrayList<>();
+        for(int i=0;i<10;i++) {
+            orderForms.add(new OrderForm(new Date(), new Car("1U3456"+i)));
+        }
+        ParkingLot parkingLot = new ParkingLot("Lala", 10, "where",orderForms);
+        parkingLot.setId(1);
+        given(parkingLotRepository.findById(any(Long.class))).willReturn(java.util.Optional.of(parkingLot));
+        mvc.perform(get("/parking-lots/1/empty-position"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("停车场已经满"));
+    }
+    @Test
     public void should_add_orderform_when_call_add_parkingLot_order_form_api() throws Exception {
         Gson gson = new Gson();
         List<OrderForm> orderForms = new ArrayList<>();
