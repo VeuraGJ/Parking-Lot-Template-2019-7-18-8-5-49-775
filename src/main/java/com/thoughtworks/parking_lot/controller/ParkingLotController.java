@@ -6,7 +6,6 @@ import com.thoughtworks.parking_lot.entity.ParkingLot;
 import com.thoughtworks.parking_lot.repository.OrderFormRepository;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,15 +57,15 @@ public class ParkingLotController {
     @GetMapping("/parking-lots/{parkingLotId}/empty-position")
     public String getParkingLotEmptyPositionNum(@PathVariable long parkingLotId) {
         ParkingLot parkingLot=parkingLotRepository.findById(parkingLotId).orElse(null);
-        List<OrderForm> orderForms=parkingLot.getOrderForms().stream()
+        List<OrderForm> orderForms =parkingLot.getOrderForms().stream()
                 .filter(orderForm -> orderForm.getStatus().equals("on"))
                 .collect(Collectors.toList());
-        if(parkingLot.getCapacity()-orderForms.size()==0){
+        if(parkingLot.getCapacity()- orderForms.size()==0){
             return "停车场已经满";
         }
-        return String.valueOf(parkingLot.getCapacity()-orderForms.size());
+        return String.valueOf(parkingLot.getCapacity()- orderForms.size());
     }
-    @PostMapping("/parking-lots/{parkingLotId}/order-forms")
+    @PostMapping("/parking-lots/{parkingLotId}/orderForm-forms")
     public ResponseEntity<ParkingLot> addOrderForm(@PathVariable long parkingLotId,@RequestBody OrderForm orderForm){
         ParkingLot parkingLot =parkingLotRepository.findById(parkingLotId).orElse(null);
         orderForm.setCreateTime(new Date());
@@ -74,16 +73,16 @@ public class ParkingLotController {
         return ResponseEntity.ok(parkingLotRepository.save(parkingLot));
     }
     @PutMapping("/parking-lots/{parkingLotId}/order-forms")
-    public ResponseEntity<OrderForm> updateOrderForm(@PathVariable long parkingLotId,@RequestBody Car car){
+    public ResponseEntity<OrderForm> updateOrderForm(@PathVariable long parkingLotId, @RequestBody Car car){
         ParkingLot parkingLot =parkingLotRepository.findById(parkingLotId).orElse(null);
-        OrderForm updateorderForm = parkingLot.getOrderForms().stream()
+        OrderForm updateorder = parkingLot.getOrderForms().stream()
                 .filter(orderForm -> orderForm.getStatus().equals("on") && orderForm.getCar().getId().equals(car.getId()))
                 .findFirst().orElse(null);
-        if(updateorderForm!= null){
-            updateorderForm.setEndTime(new Date());
-            updateorderForm.setStatus("closed");
-            updateorderForm = orderFormRepository.save(updateorderForm);
+        if(updateorder != null){
+            updateorder.setEndTime(new Date());
+            updateorder.setStatus("closed");
+            updateorder = orderFormRepository.save(updateorder);
         }
-        return ResponseEntity.ok(updateorderForm);
+        return ResponseEntity.ok(updateorder);
     }
 }

@@ -9,12 +9,8 @@ import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -24,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -113,7 +108,7 @@ public class ParkingLotControllerTest {
     public void should_get_parkingLot_empty_position_when_call_get_parkingLot_empty_position_api() throws Exception {
         List<OrderForm> orderForms = new ArrayList<>();
         orderForms.add(new OrderForm(new Date(),new Car("1U3456")));
-        ParkingLot parkingLot = new ParkingLot("Lala", 10, "where",orderForms);
+        ParkingLot parkingLot = new ParkingLot("Lala", 10, "where", orderForms);
         parkingLot.setId(1);
         given(parkingLotRepository.findById(any(Long.class))).willReturn(java.util.Optional.of(parkingLot));
         mvc.perform(get("/parking-lots/1/empty-position"))
@@ -127,7 +122,7 @@ public class ParkingLotControllerTest {
         for(int i=0;i<10;i++) {
             orderForms.add(new OrderForm(new Date(), new Car("1U3456"+i)));
         }
-        ParkingLot parkingLot = new ParkingLot("Lala", 10, "where",orderForms);
+        ParkingLot parkingLot = new ParkingLot("Lala", 10, "where", orderForms);
         parkingLot.setId(1);
         given(parkingLotRepository.findById(any(Long.class))).willReturn(java.util.Optional.of(parkingLot));
         mvc.perform(get("/parking-lots/1/empty-position"))
@@ -140,7 +135,7 @@ public class ParkingLotControllerTest {
         Gson gson = new Gson();
         List<OrderForm> orderForms = new ArrayList<>();
         orderForms.add(new OrderForm(new Car("1U3456")));
-        ParkingLot parkingLot = new ParkingLot("Lala", 10, "where",orderForms);
+        ParkingLot parkingLot = new ParkingLot("Lala", 10, "where", orderForms);
         parkingLot.setId(1);
         given(parkingLotRepository.findById(any(Long.class))).willReturn(java.util.Optional.of(parkingLot));
         parkingLot.getOrderForms().add(new OrderForm(new Car("1O456")));
@@ -157,13 +152,13 @@ public class ParkingLotControllerTest {
         Car car =new Car("1U3456");
         OrderForm orderForm =new OrderForm(car);
         orderForms.add(orderForm);
-        ParkingLot parkingLot = new ParkingLot("Lala", 10, "where",orderForms);
+        ParkingLot parkingLot = new ParkingLot("Lala", 10, "where", orderForms);
         parkingLot.setId(1);
         given(parkingLotRepository.findById(any(Long.class))).willReturn(java.util.Optional.of(parkingLot));
         OrderForm updateOrderForm =new OrderForm(car);
         updateOrderForm.setStatus("closed");
         given(orderFormRepository.save(any(OrderForm.class))).willReturn(updateOrderForm);
-        mvc.perform(put("/parking-lots/1/order-forms").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(car)))
+        mvc.perform(put("/parking-lots/1/orderForm-forms").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(car)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("closed"))
