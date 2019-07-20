@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.thoughtworks.parking_lot.entity.Car;
 import com.thoughtworks.parking_lot.entity.OrderForm;
 import com.thoughtworks.parking_lot.entity.ParkingLot;
+import com.thoughtworks.parking_lot.repository.OrderFormRepository;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +40,8 @@ public class ParkingLotControllerTest {
 
     @MockBean
     private ParkingLotRepository parkingLotRepository;
+    @MockBean
+    private OrderFormRepository orderFormRepository;
     @Test
     public void should_add_parkingLot_when_call_post_parkingLot_api() throws Exception {
         Gson gson = new Gson();
@@ -132,5 +135,24 @@ public class ParkingLotControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderForms.length()").value(orderForms.size()));
+    }
+    @Test
+    public void should_update_orderform_when_call_update_parkingLot_order_form_api() throws Exception {
+        Gson gson = new Gson();
+        List<OrderForm> orderForms = new ArrayList<>();
+        Car car =new Car("1U3456");
+        OrderForm orderForm =new OrderForm(car);
+        orderForms.add(orderForm);
+        ParkingLot parkingLot = new ParkingLot("Lala", 10, "where",orderForms);
+        parkingLot.setId(1);
+        given(parkingLotRepository.findById(any(Long.class))).willReturn(java.util.Optional.of(parkingLot));
+        OrderForm updateOrderForm =new OrderForm(car);
+        updateOrderForm.setStatus("closed");
+        given(orderFormRepository.save(any(OrderForm.class))).willReturn(updateOrderForm);
+        mvc.perform(put("/parking-lots/1/order-forms").contentType(MediaType.APPLICATION_JSON).content(gson.toJson(car)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("closed"))
+                .andExpect(jsonPath("$.car.id").value("1U3456"));
     }
 }

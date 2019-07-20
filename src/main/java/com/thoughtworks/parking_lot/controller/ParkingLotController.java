@@ -1,7 +1,9 @@
 package com.thoughtworks.parking_lot.controller;
 
+import com.thoughtworks.parking_lot.entity.Car;
 import com.thoughtworks.parking_lot.entity.OrderForm;
 import com.thoughtworks.parking_lot.entity.ParkingLot;
+import com.thoughtworks.parking_lot.repository.OrderFormRepository;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 public class ParkingLotController {
     @Autowired
     private ParkingLotRepository parkingLotRepository;
+    @Autowired
+    private OrderFormRepository orderFormRepository;
     @PostMapping("/parking-lots")
     public ResponseEntity<ParkingLot> addParkingLot(@RequestBody ParkingLot parkingLot){
         return ResponseEntity.ok(parkingLotRepository.save(parkingLot));
@@ -67,5 +71,18 @@ public class ParkingLotController {
         orderForm.setCreateTime(new Date());
         parkingLot.getOrderForms().add(orderForm);
         return ResponseEntity.ok(parkingLotRepository.save(parkingLot));
+    }
+    @PutMapping("/parking-lots/{parkingLotId}/order-forms")
+    public ResponseEntity<OrderForm> updateOrderForm(@PathVariable long parkingLotId,@RequestBody Car car){
+        ParkingLot parkingLot =parkingLotRepository.findById(parkingLotId).orElse(null);
+        OrderForm updateorderForm = parkingLot.getOrderForms().stream()
+                .filter(orderForm -> orderForm.getStatus().equals("on") && orderForm.getCar().getId().equals(car.getId()))
+                .findFirst().orElse(null);
+        if(updateorderForm!= null){
+            updateorderForm.setEndTime(new Date());
+            updateorderForm.setStatus("closed");
+            updateorderForm = orderFormRepository.save(updateorderForm);
+        }
+        return ResponseEntity.ok(updateorderForm);
     }
 }
